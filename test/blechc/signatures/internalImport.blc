@@ -1,0 +1,8 @@
+import internal at "abstractType"
+
+internal module exposes f 
+
+function f() returns at.T
+    var v: at.T = {}
+    return v
+end

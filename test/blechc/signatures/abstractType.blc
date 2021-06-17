@@ -1,0 +1,5 @@
+module
+
+struct T 
+    var b: bool
+end

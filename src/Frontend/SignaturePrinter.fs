@@ -868,8 +868,10 @@ module SignaturePrinter =
             let requiredExposedNames = 
                 Option.map psImportExposes imp.exposing
 
-            if ctx.IsRequiredImport imp.localName  then
-                txt "import" 
+            if ctx.IsRequiredImport imp.localName  then 
+                (if imp.isInternal 
+                    then txt "import internal" 
+                    else txt "import") 
                 <+> dpModuleName imp.localName
                 <+> dquotes imp.modulePath.path.ToDoc
                 |> dpOptSpacePostfix <| requiredExposedNames   
