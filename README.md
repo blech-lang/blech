@@ -1,7 +1,7 @@
 
 # Blech Compiler
 
-[![.NET](https://github.com/boschresearch/blech/actions/workflows/dotnet.yml/badge.svg)](https://github.com/boschresearch/blech/actions/workflows/dotnet.yml)
+[![.NET](https://github.com/blech-lang/blech/actions/workflows/dotnet.yml/badge.svg)](https://github.com/blech-lang/blech/actions/workflows/dotnet.yml)
 
 Blech is a language for developing reactive, real-time critical embedded software.
 This open source project implements a compiler which translates Blech to C.
