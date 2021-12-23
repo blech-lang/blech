@@ -1,7 +1,9 @@
 
 # Blech Compiler
 
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![.NET](https://github.com/blech-lang/blech/actions/workflows/dotnet.yml/badge.svg)](https://github.com/blech-lang/blech/actions/workflows/dotnet.yml)
+
 
 Blech is a language for developing reactive, real-time critical embedded software.
 This open source project implements a compiler which translates Blech to C.
