@@ -31,10 +31,10 @@ Navigate to the folder where you have checked out the Blech project. It should c
     ```
     dotnet build
     ```
-    This creates `./src/blechc/bin/Debug/net5.0/blechc.dll`.
+    This creates `./src/blechc/bin/Debug/net6.0/blechc.dll`.
     Use the dotnet command to start the compiler like so
     ```
-    dotnet ./src/blechc/bin/Debug/net5.0/blechc.dll
+    dotnet ./src/blechc/bin/Debug/net6.0/blechc.dll
     ```
   * For a release build additionally use the `-c Release` option.
 
@@ -44,7 +44,7 @@ Navigate to the folder where you have checked out the Blech project. It should c
     ```
     For Linux use `linux-x64` or `linux-arm64`, for MacOS use `osx-x64` for Intel or `osx-arm64` for Apple silicon.
 
-    This creates a folder `./src/blechc/bin/Release/net5.0/win-x64/publish` which contains all files needed for execution. The folder as a whole can be moved arbitrarily.
+    This creates a folder `./src/blechc/bin/Release/net6.0/win-x64/publish` which contains all files needed for execution. The folder as a whole can be moved arbitrarily.
     Inside the folder invoke the binary
     ```
     blechc
