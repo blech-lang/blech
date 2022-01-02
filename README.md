@@ -1,7 +1,9 @@
 
 # Blech Compiler
 
-[![.NET](https://github.com/boschresearch/blech/actions/workflows/dotnet.yml/badge.svg)](https://github.com/boschresearch/blech/actions/workflows/dotnet.yml)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![.NET](https://github.com/blech-lang/blech/actions/workflows/dotnet.yml/badge.svg)](https://github.com/blech-lang/blech/actions/workflows/dotnet.yml)
+
 
 Blech is a language for developing reactive, real-time critical embedded software.
 This open source project implements a compiler which translates Blech to C.
@@ -20,9 +22,9 @@ standards (e.g. ISO 26262).
 
 Clone the project using
 ```
-git clone https://github.com/boschresearch/blech
+git clone https://github.com/blech-lang/blech
 ```
-To build the project, you need `.Net` installed. Go to the [Microsoft Download .NET](https://dotnet.microsoft.com/download) page and follow the instructions to install `.Net 5.0` available for your operating system.
+To build the project, you need `.Net` installed. Go to the [Microsoft Download .NET](https://dotnet.microsoft.com/download) page and follow the instructions to install `.Net 6.0 LTS` available for your operating system.
 
 Navigate to the folder where you have checked out the Blech project. It should contain the file `Blech.sln`. Now you have choices:
   * For a simple **debug build** run
@@ -36,11 +38,11 @@ Navigate to the folder where you have checked out the Blech project. It should c
     ```
   * For a release build additionally use the `-c Release` option.
 
-  * Finally, for a **self-contained release build**, which is operating system dependent, you need to run `dotnet publish` with a specific runtime identifier like so
+  * Finally, for a **release build**, which is operating system dependent, you need to run `dotnet publish` with a specific runtime identifier like so
     ```
-    dotnet publish -c Release -r win-x64
+    dotnet publish -c Release -r win-x64 --self-contained false
     ```
-    For Linux use `linux-x64`, for MacOS use `osx-x64`.
+    For Linux use `linux-x64` or `linux-arm64`, for MacOS use `osx-x64` for Intel or `osx-arm64` for Apple silicon.
 
     This creates a folder `./src/blechc/bin/Release/net5.0/win-x64/publish` which contains all files needed for execution. The folder as a whole can be moved arbitrarily.
     Inside the folder invoke the binary
@@ -56,13 +58,16 @@ dotnet test
 This includes parser, name resolution, type checking and causality checking tests.
 If you use VisualStudio 2017 or later, you can open the solution file and build the project from within VisualStudio. You can also run the unit tests provided you have installed the `NUnit3 Test Adapter` plugin.
 
-**Code generation**, however, is tested separately outside this framework. In `./test/blechc` invoke 
+**Code generation**, however, is tested separately outside this framework. There are several subfolders for codegeneration tests. In `./test/blechc` invoke 
 ```
-dotnet run -- codegeneration tmp
+dotnet run -- programs tmp/programs
 ```
+to run the tests for general programs.
+
 This (upon first invocation) will interactively create a `config` file, and then compile every file in `codegeneration` to C, compile that to an executable, run it, and compare the resulting trace with the specified trace. In this way we ensure that changes to our backend do not change the behaviour of the generated files.
-The batch script `testCodegenerationAll.bat` automates this testing process on Windows.
-It ensures that the program is executed from the Developer Command Prompt, that generated files from previous runs are deleted and calls the test framework on every folder.
+
+The batch script `testCodegenerationAll.bat` automates this testing process on Windows. It ensures that the program is executed from the Developer Command Prompt, that generated files from previous runs are deleted and calls the test framework on every folder.
+
 The shell scipt `testCodegnerationAll.sh` does the same for MacOS and Linux.
 
 ### Use blechc
@@ -77,7 +82,7 @@ on the command line interface.
 If you do not have a standalone (publish) build and want to use your local Debug (or Release) build, use the `dotnet` command to start the compiler from your blech working directory. 
 
 ```
-dotnet <path-to>/blech/src/blechc/bin/Debug/net5.0/blechc.dll
+dotnet <path-to>/blech/src/blechc/bin/Debug/net6.0/blechc.dll
 ```
 
 

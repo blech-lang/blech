@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2019 - for information on the respective copyright owner
 // see the NOTICE file and/or the repository 
-// https://github.com/boschresearch/blech.
+// https://github.com/blech-lang/blech.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -76,11 +76,11 @@ module SymbolTable =
         let private anonCounter = ref 0
         
         let init() =
-            anonCounter := 0
+            anonCounter.Value <- 0
             
         let nextAnonymousId () : Identifier =
-            anonCounter := !anonCounter + 1
-            string !anonCounter
+            anonCounter.Value <- anonCounter.Value + 1
+            string anonCounter.Value
 
         let addSymbol scope (symbol: Symbol)  =
             let id = symbol.name.id

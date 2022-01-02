@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2019 - for information on the respective copyright owner
 // see the NOTICE file and/or the repository 
-// https://github.com/boschresearch/blech.
+// https://github.com/blech-lang/blech.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ let rec private translateFunctionStatements ctx curComp stmts =
     stmts
     |> List.map (translateFunctionStatement ctx curComp)
     |> dpBlock
-and private translateFunctionStatement ctx curComp stmt =
+and private translateFunctionStatement ctx (curComp : Compilation ref ) stmt =
     match stmt with
     | Stmt.VarDecl v ->
         // If this declares a constant, do not generate any code here. The
@@ -139,9 +139,9 @@ and private translateFunctionStatement ctx curComp stmt =
             else // otherwise copy the value into retvar
                 // construct typed lhs
                 let lhs =
-                    let name = (!curComp).retvar |> Option.get |> (fun p -> p.name)
+                    let name = (curComp.Value).retvar |> Option.get |> (fun p -> p.name)
                     let typ =
-                        match ctx.tcc.nameToDecl.[(!curComp).name] with
+                        match ctx.tcc.nameToDecl.[(curComp.Value).name] with
                         | ProcedurePrototype p -> p.returns
                         | ProcedureImpl d -> d.Returns
                         | _ -> failwith "expected subprogram, got something else"
@@ -205,23 +205,23 @@ let internal translate ctx (subProgDecl: ProcedureImpl) =
     
     let completeFunctionCode =
         retType
-        <+> cpStaticName (!curComp).name
-        <+> cpFunctionIface ctx.tcc (!curComp)
+        <+> cpStaticName (curComp.Value).name
+        <+> cpFunctionIface ctx.tcc (curComp.Value)
         <+> txt "{"
         <.> cpIndent code
         <.> txt "}"
 
     let signature =
         retType
-        <+> cpStaticName (!curComp).name
-        <+> cpFunctionIface ctx.tcc (!curComp)
+        <+> cpStaticName (curComp.Value).name
+        <+> cpFunctionIface ctx.tcc (curComp.Value)
         <^> semi
 
     let optDoc = 
         cpOptDocComments subProgDecl.annotation.doc
 
-    curComp := { !curComp with 
-                    signature = signature
-                    implementation = completeFunctionCode 
-                    doc = optDoc }
-    !curComp
+    curComp.Value <- { curComp.Value with 
+                        signature = signature
+                        implementation = completeFunctionCode 
+                        doc = optDoc }
+    curComp.Value

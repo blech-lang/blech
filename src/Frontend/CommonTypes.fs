@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2019 - for information on the respective copyright owner
 // see the NOTICE file and/or the repository 
-// https://github.com/boschresearch/blech.
+// https://github.com/blech-lang/blech.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -144,8 +144,8 @@ let private auxVarIndex = ref 0
 /// returns an auxiliary identifier which never clashes with a Blech identifier    
 ///  blech identifiers do not allow to have digits following the '_'
 let private mkAuxIdentifierFrom text : Identifier =
-    let cur = !auxVarIndex
-    auxVarIndex := 1 + !auxVarIndex
+    let cur = auxVarIndex.Value
+    auxVarIndex.Value <- 1 + auxVarIndex.Value
     sprintf "%s_%s" text (string cur) 
 
 let mkAuxQNameFrom s = 
@@ -155,8 +155,8 @@ let mkIndexedAuxQNameFrom s =
     QName.CreateAuxiliary [] <| mkAuxIdentifierFrom s
 
 let mkPrefixIndexedNameFrom s =
-    let cur = !auxVarIndex
-    auxVarIndex := 1 + !auxVarIndex
+    let cur = auxVarIndex.Value
+    auxVarIndex.Value <- 1 + auxVarIndex.Value
     sprintf "%s_%s" (string cur) s
 
     

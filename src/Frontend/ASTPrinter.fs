@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2019 - for information on the respective copyright owner
 // see the NOTICE file and/or the repository 
-// https://github.com/boschresearch/blech.
+// https://github.com/blech-lang/blech.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,9 +49,9 @@ module ASTPrint =
             | Point (id = n) ->
                 chr '.' <^> dpName n
             | Index (index = expr) ->
-                !refFExpr expr |> brackets
+                refFExpr.Value expr |> brackets
             | StaticIndex (index = expr) ->
-                chr '.' <^> !refFExpr expr |>  brackets
+                chr '.' <^> refFExpr.Value expr |>  brackets
             
         let ppAccessList path =
             path
@@ -289,7 +289,7 @@ module ASTPrint =
             | FloatType.Float32 -> txt "float32"
             | FloatType.Float64 -> txt "float64"
               
-        let ppArrayLength = !refFExpr 
+        let ppArrayLength = refFExpr.Value 
 
         let rec ppDataTypes datatypes =
             List.map (fun dt -> fDataType dt) datatypes 
@@ -579,7 +579,7 @@ module ASTPrint =
         and fExpr expr =
             ppExpr dpPrec.["min"] expr
 
-        refFExpr := fExpr  // before doing anything supply the refernce
+        refFExpr.Value <- fExpr  // before doing anything supply the refernce
 
         // --- Receiver
 
