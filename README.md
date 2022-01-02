@@ -40,7 +40,7 @@ Navigate to the folder where you have checked out the Blech project. It should c
 
   * Finally, for a **release build**, which is operating system dependent, you need to run `dotnet publish` with a specific runtime identifier like so
     ```
-    dotnet publish -c Release -r win-x64 --self-contained
+    dotnet publish -c Release -r win-x64 --self-contained false
     ```
     For Linux use `linux-x64` or `linux-arm64`, for MacOS use `osx-x64` for Intel or `osx-arm64` for Apple silicon.
 
