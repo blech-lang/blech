@@ -22,9 +22,9 @@ standards (e.g. ISO 26262).
 
 Clone the project using
 ```
-git clone https://github.com/boschresearch/blech
+git clone https://github.com/blech-lang/blech
 ```
-To build the project, you need `.Net` installed. Go to the [Microsoft Download .NET](https://dotnet.microsoft.com/download) page and follow the instructions to install `.Net 5.0` available for your operating system.
+To build the project, you need `.Net` installed. Go to the [Microsoft Download .NET](https://dotnet.microsoft.com/download) page and follow the instructions to install `.Net 6.0 LTS` available for your operating system.
 
 Navigate to the folder where you have checked out the Blech project. It should contain the file `Blech.sln`. Now you have choices:
   * For a simple **debug build** run
@@ -38,11 +38,11 @@ Navigate to the folder where you have checked out the Blech project. It should c
     ```
   * For a release build additionally use the `-c Release` option.
 
-  * Finally, for a **self-contained release build**, which is operating system dependent, you need to run `dotnet publish` with a specific runtime identifier like so
+  * Finally, for a **release build**, which is operating system dependent, you need to run `dotnet publish` with a specific runtime identifier like so
     ```
-    dotnet publish -c Release -r win-x64
+    dotnet publish -c Release -r win-x64 --self-contained
     ```
-    For Linux use `linux-x64`, for MacOS use `osx-x64`.
+    For Linux use `linux-x64` or `linux-arm64`, for MacOS use `osx-x64` for Intel or `osx-arm64` for Apple silicon.
 
     This creates a folder `./src/blechc/bin/Release/net5.0/win-x64/publish` which contains all files needed for execution. The folder as a whole can be moved arbitrarily.
     Inside the folder invoke the binary
@@ -60,7 +60,7 @@ If you use VisualStudio 2017 or later, you can open the solution file and build 
 
 **Code generation**, however, is tested separately outside this framework. In `./test/blechc` invoke 
 ```
-dotnet run -- codegeneration tmp
+./testCodegenerationAll.[sh,bat]
 ```
 This (upon first invocation) will interactively create a `config` file, and then compile every file in `codegeneration` to C, compile that to an executable, run it, and compare the resulting trace with the specified trace. In this way we ensure that changes to our backend do not change the behaviour of the generated files.
 The batch script `testCodegenerationAll.bat` automates this testing process on Windows.
@@ -79,7 +79,7 @@ on the command line interface.
 If you do not have a standalone (publish) build and want to use your local Debug (or Release) build, use the `dotnet` command to start the compiler from your blech working directory. 
 
 ```
-dotnet <path-to>/blech/src/blechc/bin/Debug/net5.0/blechc.dll
+dotnet <path-to>/blech/src/blechc/bin/Debug/net6.0/blechc.dll
 ```
 
 
