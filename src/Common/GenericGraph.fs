@@ -397,15 +397,15 @@ let stronglyConnectedComponents (graph : Graph<_, _>) =
 
     // now find components by backward visit in that order
     let discover _ cur =
-        if (!curRoot) = None then
-            curRoot := Some cur 
+        if (curRoot.Value) = None then
+            curRoot.Value <- Some cur 
             components.[cur] <- new HashSet<_> ()
         else
             ()
-        components.[(!curRoot).Value].Add cur |> ignore
+        components.[(curRoot.Value).Value].Add cur |> ignore
         false
     let finish _ cur =
-        if (!curRoot) = Some cur then curRoot := None else ()
+        if (curRoot.Value) = Some cur then curRoot.Value <- None else ()
         //componentsOrder.Add cur
         false
     ignore <| depthsFirstBackward orderedVertices discover finish proceed proceed 

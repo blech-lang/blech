@@ -58,13 +58,16 @@ dotnet test
 This includes parser, name resolution, type checking and causality checking tests.
 If you use VisualStudio 2017 or later, you can open the solution file and build the project from within VisualStudio. You can also run the unit tests provided you have installed the `NUnit3 Test Adapter` plugin.
 
-**Code generation**, however, is tested separately outside this framework. In `./test/blechc` invoke 
+**Code generation**, however, is tested separately outside this framework. There are several subfolders for codegeneration tests. In `./test/blechc` invoke 
 ```
-./testCodegenerationAll.[sh,bat]
+dotnet run -- programs tmp/programs
 ```
+to run the tests for general programs.
+
 This (upon first invocation) will interactively create a `config` file, and then compile every file in `codegeneration` to C, compile that to an executable, run it, and compare the resulting trace with the specified trace. In this way we ensure that changes to our backend do not change the behaviour of the generated files.
-The batch script `testCodegenerationAll.bat` automates this testing process on Windows.
-It ensures that the program is executed from the Developer Command Prompt, that generated files from previous runs are deleted and calls the test framework on every folder.
+
+The batch script `testCodegenerationAll.bat` automates this testing process on Windows. It ensures that the program is executed from the Developer Command Prompt, that generated files from previous runs are deleted and calls the test framework on every folder.
+
 The shell scipt `testCodegnerationAll.sh` does the same for MacOS and Linux.
 
 ### Use blechc

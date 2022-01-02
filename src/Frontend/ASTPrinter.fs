@@ -49,9 +49,9 @@ module ASTPrint =
             | Point (id = n) ->
                 chr '.' <^> dpName n
             | Index (index = expr) ->
-                !refFExpr expr |> brackets
+                refFExpr.Value expr |> brackets
             | StaticIndex (index = expr) ->
-                chr '.' <^> !refFExpr expr |>  brackets
+                chr '.' <^> refFExpr.Value expr |>  brackets
             
         let ppAccessList path =
             path
@@ -289,7 +289,7 @@ module ASTPrint =
             | FloatType.Float32 -> txt "float32"
             | FloatType.Float64 -> txt "float64"
               
-        let ppArrayLength = !refFExpr 
+        let ppArrayLength = refFExpr.Value 
 
         let rec ppDataTypes datatypes =
             List.map (fun dt -> fDataType dt) datatypes 
@@ -579,7 +579,7 @@ module ASTPrint =
         and fExpr expr =
             ppExpr dpPrec.["min"] expr
 
-        refFExpr := fExpr  // before doing anything supply the refernce
+        refFExpr.Value <- fExpr  // before doing anything supply the refernce
 
         // --- Receiver
 

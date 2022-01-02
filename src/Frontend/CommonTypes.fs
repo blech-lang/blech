@@ -144,8 +144,8 @@ let private auxVarIndex = ref 0
 /// returns an auxiliary identifier which never clashes with a Blech identifier    
 ///  blech identifiers do not allow to have digits following the '_'
 let private mkAuxIdentifierFrom text : Identifier =
-    let cur = !auxVarIndex
-    auxVarIndex := 1 + !auxVarIndex
+    let cur = auxVarIndex.Value
+    auxVarIndex.Value <- 1 + auxVarIndex.Value
     sprintf "%s_%s" text (string cur) 
 
 let mkAuxQNameFrom s = 
@@ -155,8 +155,8 @@ let mkIndexedAuxQNameFrom s =
     QName.CreateAuxiliary [] <| mkAuxIdentifierFrom s
 
 let mkPrefixIndexedNameFrom s =
-    let cur = !auxVarIndex
-    auxVarIndex := 1 + !auxVarIndex
+    let cur = auxVarIndex.Value
+    auxVarIndex.Value <- 1 + auxVarIndex.Value
     sprintf "%s_%s" (string cur) s
 
     

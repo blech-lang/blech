@@ -76,11 +76,11 @@ module SymbolTable =
         let private anonCounter = ref 0
         
         let init() =
-            anonCounter := 0
+            anonCounter.Value <- 0
             
         let nextAnonymousId () : Identifier =
-            anonCounter := !anonCounter + 1
-            string !anonCounter
+            anonCounter.Value <- anonCounter.Value + 1
+            string anonCounter.Value
 
         let addSymbol scope (symbol: Symbol)  =
             let id = symbol.name.id
