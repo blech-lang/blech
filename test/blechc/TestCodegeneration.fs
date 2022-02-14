@@ -444,7 +444,7 @@ let createConfig() =
         writer.AutoFlush <- true
         let defaultBlechcLocation = 
             System.IO.Path.Combine [| "..";"..";"src";"blechc";"bin";"Debug";
-                                      "net5.0";"blechc.dll" |]
+                                      "net6.0";"blechc.dll" |]
             |> System.IO.Path.GetFullPath
         let defaultIncludeLocation =
             System.IO.Path.Combine [| "..";"..";"src";"blechc";"include" |]
