@@ -32,7 +32,7 @@ type Action = Blech.Intermediate.Action
 
 /// Program counters are hierarchically represented in a tree structure
 /// The root node is the main program counter of an activity
-/// Other nodes represent pcs for cobegin branches
+/// Other nodes represent pcs for cobegin/abort branches
 /// The pcs for a called subactivity are not part of this tree, they are
 /// stored in subcontexts
 type PCtree =
@@ -120,38 +120,50 @@ module PCtree =
     
     let internal asList (tree: PCtree) = tree.AsList
 
-    let internal add tree (thread: Thread) (pc: ParamDecl) =
-        let transplant dest child =
-            {dest with subPCs = dest.subPCs @ [child]}
-        let rec insertIntoTree tr ancs =
+    let internal add (curTree: PCtree) pcThread (pc: ParamDecl) : PCtree =
+        /// tr is the current program counter (sub-)tree under consideration
+        /// ancs is the list of ancestors of pcThread (starting at root and ending in pcThread
+        /// pc is the variable that stores the control flow progress in pcThread
+        let rec insertPCinto tr ancs =
+            let tryFindChildIndex thread = 
+                List.tryFindIndex (fun subtree -> subtree.thread = thread) tr.subPCs
             // ancs - ancestors sorted from root to current thread
             assert (tr.thread = List.head ancs)
-            let nextThread = List.head (List.tail ancs)
-            tr.subPCs
-            |> List.tryFindIndex (fun subtree -> subtree.thread = nextThread)
-            |> function
-                | Some index ->
-                    let subtree = insertIntoTree tr.subPCs.[index] (List.tail ancs)
-                    let newSubPCs = tr.subPCs.[0..index-1] @ [subtree] @ tr.subPCs.[index+1..]
-                    { tr with subPCs = newSubPCs }
+            // we know that thread is not the main thread for this activity and hence must have a sub-tread
+            match List.tail ancs with
+            | [] -> failwith "Ancestors cannot be empty by construction. There must at least be the root."
+            | [subThread] -> // = pcThread, must not yet be in `tr`
+                match tryFindChildIndex subThread with
+                | Some _ -> failwith "subThread must not yet be in `tr`"
                 | None ->
-                    // make new subtree for pc
-                    let newSubtree = mkNew thread pc
-                    // transplant every pc that is in a subthread underneath
+                    // add to current sub-tree
+                    let newSubtree = mkNew pcThread pc
                     let subTreesToMove, subTreesUnaffected =
                         tr.subPCs
-                        |> List.partition (fun subtree -> List.contains nextThread (Thread.allAncestors subtree.thread))
-                    let finalSubtree = List.fold (transplant) newSubtree subTreesToMove
+                        |> List.partition (fun subtree -> List.contains subThread (Thread.allAncestors subtree.thread))
+                    let finalSubtree = List.fold addPCtree newSubtree subTreesToMove
                     let newSubPCs = subTreesUnaffected @ [finalSubtree]
-                    { tr with subPCs = newSubPCs }        
-        let alreadyAdded =
-            tree.subPCs |> List.exists (fun t -> t.Contains pc)
-        if alreadyAdded then 
-            tree // nothing to do
+                    { tr with subPCs = newSubPCs }
+            | subThread :: rest ->
+                match tryFindChildIndex subThread with
+                // the sub-thread is already in the tree
+                | Some index ->
+                    // since pc's and threads have a one-to-one correspondence and we have
+                    // established that pc (and pcThread) are not yet in tree, we need to
+                    // descend further along the tree
+                    let subtree = insertPCinto tr.subPCs.[index] (List.tail ancs)
+                    let newSubPCs = tr.subPCs.[0..index-1] @ [subtree] @ tr.subPCs.[index+1..]
+                    { tr with subPCs = newSubPCs }
+                // sub-thread not found
+                | None ->
+                    // if there are further ancestors try searching those
+                    insertPCinto tr (List.head ancs :: rest)
+        if curTree.Contains pc then curTree // nothing to do
         else
-            let allAncestors = Thread.allAncestors thread |> List.rev // sort from root to current thread
-            insertIntoTree tree allAncestors
-
+            // descend through the tree following the thread ancestors from root
+            Thread.allAncestors pcThread 
+            |> List.rev // sort from root to current thread
+            |> insertPCinto curTree
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module ActivityContext =

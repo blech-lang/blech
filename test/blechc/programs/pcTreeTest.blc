@@ -1,0 +1,78 @@
+activity Ctrl(stop_btn :bool)(bug_led: bool , state:nat8) //we declare the variable state as output just for debug 
+
+    bug_led = false // should remain always false
+    var a: bool = true
+    var b: bool = true
+    var requested_state : nat8 = 0
+
+  cobegin
+    repeat
+        a = true
+        await true
+    end
+  with
+    state = 0
+    when state != requested_state reset
+      state = requested_state
+
+      if state == 0 then
+
+        cobegin 
+          requested_state = 2
+          await true
+
+        with
+            await stop_btn
+            bug_led = true
+        end
+      
+      elseif state == 1 then
+        
+        //infinite loop        
+        repeat
+            await true
+        end
+
+        await a 
+        when b  abort
+            await true
+        end
+
+
+      elseif state == 2 then
+
+        await stop_btn 
+        requested_state = 1
+        await true
+
+      end
+
+      await true
+
+    end // end when 
+
+  end
+
+end
+
+@[EntryPoint]
+activity Driver ()
+    var led: bool
+    var rq: nat8
+    var btn: bool
+    cobegin
+        run Ctrl(btn)(led, rq)
+    with
+        btn = false
+        await true
+        await true
+        await true
+        await true
+        btn = true
+        await true
+        btn = false
+        await true
+        await true
+        await true
+    end
+end
