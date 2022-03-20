@@ -63,6 +63,7 @@ module Main =
 
     let runParser logger implOrIface moduleName contents fileName =
         Logging.log2 "Main" ("processing file " + fileName)
+        do CommonTypes.initAuxVarIndex ()
         ParsePkg.parseModuleFromStr logger implOrIface moduleName fileName contents
 
 
@@ -93,7 +94,8 @@ module Main =
 
 
     let runCausalityCheck logger inputFile tyCtx blechModule =
-        Logging.log2 "Main" ("checking causality in " + inputFile) 
+        Logging.log2 "Main" ("checking causality in " + inputFile)
+        do CommonTypes.initAuxQNameIndex ()
         Causality.checkPackCausality logger tyCtx blechModule
 
     //---
@@ -231,8 +233,6 @@ module Main =
                        moduleName 
                        fileName 
                        fileContents =
-        CommonTypes.initAuxVarIndex ()
-        CommonTypes.initAuxQNameIndex ()
         let resultWorkflow = ResultBuilder()
         resultWorkflow
             {
@@ -333,8 +333,6 @@ module Main =
                                 moduleName 
                                 fileName 
                                 fileContents =
-        CommonTypes.initAuxVarIndex ()
-        CommonTypes.initAuxQNameIndex ()
         let resultWorkflow = ResultBuilder ()
         resultWorkflow
             {

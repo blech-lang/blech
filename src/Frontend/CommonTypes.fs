@@ -141,6 +141,7 @@ type Name =
 /// index of auxiliary QNames
 let private auxQNameIndex = ref 0
 
+/// re-initialises the QName index to 0. To be called before causality check
 let initAuxQNameIndex () = 
     auxQNameIndex.Value <- 0
 
@@ -162,6 +163,7 @@ let mkIndexedAuxQNameFrom s =
 /// index of auxiliary Blech variables
 let private auxVarIndex = ref 0
 
+/// re-initialises the index for Blech auxiliary variables to 0. To be called before parsing 
 let initAuxVarIndex () = 
     auxVarIndex.Value <- 0
 
