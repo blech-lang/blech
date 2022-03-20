@@ -231,6 +231,8 @@ module Main =
                        moduleName 
                        fileName 
                        fileContents =
+        CommonTypes.initAuxVarIndex ()
+        CommonTypes.initAuxQNameIndex ()
         let resultWorkflow = ResultBuilder()
         resultWorkflow
             {
@@ -331,6 +333,8 @@ module Main =
                                 moduleName 
                                 fileName 
                                 fileContents =
+        CommonTypes.initAuxVarIndex ()
+        CommonTypes.initAuxQNameIndex ()
         let resultWorkflow = ResultBuilder ()
         resultWorkflow
             {

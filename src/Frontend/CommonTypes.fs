@@ -138,14 +138,18 @@ type Name =
 
 
 
-/// index of auxiliary variables
-let private auxVarIndex = ref 0
+/// index of auxiliary QNames
+let private auxQNameIndex = ref 0
+
+let initAuxQNameIndex () = 
+    auxQNameIndex.Value <- 0
 
 /// returns an auxiliary identifier which never clashes with a Blech identifier    
-///  blech identifiers do not allow to have digits following the '_'
+/// blech identifiers do not allow to have digits following the '_'
+/// Todo: The previous sentence is not true but it works because of the prefix blx_00, fjg 20.03.22
 let private mkAuxIdentifierFrom text : Identifier =
-    let cur = auxVarIndex.Value
-    auxVarIndex.Value <- 1 + auxVarIndex.Value
+    let cur = auxQNameIndex.Value
+    auxQNameIndex.Value <- 1 + auxQNameIndex.Value
     sprintf "%s_%s" text (string cur) 
 
 let mkAuxQNameFrom s = 
@@ -153,6 +157,13 @@ let mkAuxQNameFrom s =
 
 let mkIndexedAuxQNameFrom s = 
     QName.CreateAuxiliary [] <| mkAuxIdentifierFrom s
+
+
+/// index of auxiliary Blech variables
+let private auxVarIndex = ref 0
+
+let initAuxVarIndex () = 
+    auxVarIndex.Value <- 0
 
 let mkPrefixIndexedNameFrom s =
     let cur = auxVarIndex.Value
