@@ -205,7 +205,10 @@ let private findTreeFor (comp: Compilation) (node: Node) =
 /// Returns the name of the program counter that the given node is executed under
 // For this we use the thread ID of the node which is unique for all threads in one translation unit
 let private pc4node comp node =
-    let tree = findTreeFor comp node
+    findTreeFor comp node
+
+let private pc4nodeMainName comp node =
+    let tree = pc4node comp node
     tree.mainpc.name.basicId
 
 /// When accessing the pc, the context needs to be considered
@@ -240,9 +243,8 @@ let private endReaction comp source target =
     // note that for termination in block i, the pc is set to 2i + 1
     assignPc tree.mainpc (2 * newVal + 1)
 
-let private endThread comp node =
-    let subTree = findTreeFor comp node
-    subTree.AsList
+let private endThread (pcTree: PCtree) =
+    pcTree.AsList
     |> List.map (fun pcDecl -> assignPc pcDecl 0)
     |> dpBlock
 
@@ -365,7 +367,7 @@ let rec private processNode ctx (curComp: Compilation ref) (node: Node) =
         match action with
         | Action.Return _ -> // special case: set main pc to 0 after setting the retvar and ignore successors
             [ cpAction ctx curComp action
-              endThread curComp.Value node ]
+              endThread <| pc4node curComp.Value node ]
             |> dpBlock
         | _ ->
             let succs = ProgramGraph.cfSucc node
@@ -424,7 +426,7 @@ let rec private processNode ctx (curComp: Compilation ref) (node: Node) =
                         // can make progress
                         // clean up eventually!
                         match target.Payload.Typ with
-                        | AbortEnd bodyEnd -> endThread curComp.Value bodyEnd
+                        | AbortEnd bodyEnd -> endThread <| pc4node curComp.Value bodyEnd
                         | _ -> empty
                     let {prereqStmts=prereqStmts; cExpr=transCond} = cpExpr ctx.tcc guard
                     let transBody = 
@@ -490,7 +492,7 @@ let rec private processNode ctx (curComp: Compilation ref) (node: Node) =
         let ifstmt =
             let deactivate = 
                 prePCs 
-                |> Seq.map (fun (pc,_) -> endThread curComp.Value pc)
+                |> Seq.map (fun (pc,_) -> endThread <| pc4node curComp.Value pc)
                 |> dpBlock
             let setTermVar = renderCName Current ctx.tcc termVar <+> txt "= 1" <^> semi
             let notTermVar = renderCName Current ctx.tcc termVar <+> txt "= 0" <^> semi
@@ -536,11 +538,11 @@ let rec private processNode ctx (curComp: Compilation ref) (node: Node) =
         
     | AbortEnd bodyExit ->
         let abortBody =
-            endThread curComp.Value bodyExit </> txt @"/* terminate abort body */"
+            endThread <| pc4node curComp.Value bodyExit </> txt @"/* terminate abort body */"
         let proceedToSucc =
             match Seq.length (ProgramGraph.cfSucc node) with
             | 0 -> // dead end, e.g. end of an activity, set pc = 0
-                endThread curComp.Value node <+> txt @"/* end */"
+                endThread <| pc4node curComp.Value node <+> txt @"/* end */"
             | 1 ->
                 let edge = 
                     node.Outgoing
@@ -556,7 +558,7 @@ let rec private processNode ctx (curComp: Compilation ref) (node: Node) =
                         // if one unguarded transition, that leaves block, advance pc
                         advancePC ctx curComp.Value node target
                 | TerminateThread _ -> // terminate thread
-                    endThread curComp.Value node <+> txt @"/* term */"
+                    endThread <| pc4node curComp.Value node <+> txt @"/* term */"
                 | _ -> failwith "expected UNguarded transition" // Dataflow transitions are excluded by construction since they never emanate from nor point to simple Locations.
             | _ ->
                 failwith "An AbortEnd location must have no more than one transition."
@@ -567,7 +569,7 @@ let rec private processNode ctx (curComp: Compilation ref) (node: Node) =
         // an exit node
         match Seq.length (ProgramGraph.cfSucc node) with
         | 0 -> // dead end, e.g. end of an activity, set pc = 0
-            endThread curComp.Value node <+> txt @"/* end */"
+            endThread <| pc4node curComp.Value node <+> txt @"/* end */"
         | 1 ->
             let edge = 
                 node.Outgoing
@@ -583,7 +585,7 @@ let rec private processNode ctx (curComp: Compilation ref) (node: Node) =
                     // if one unguarded transition, that leaves block, advance pc
                     advancePC ctx curComp.Value node target
             | TerminateThread _ -> // terminate thread
-                endThread curComp.Value node <+> txt @"/* term */"
+                endThread <| pc4node curComp.Value node <+> txt @"/* term */"
             | _ -> failwith "expected UNguarded transition" // Dataflow transitions are excluded by construction since they never emanate from nor point to simple Locations.
         | _ ->
             failwith "A simple location must have no more than one transition."
@@ -593,7 +595,7 @@ let rec private processNode ctx (curComp: Compilation ref) (node: Node) =
     // and terminate execution for this thread, since the call cannot come back immediately according to Blech semantics
     | CallInit (pos, whoToCall, receiverVar, inputs, outputs, retcodeVar) ->
         let succ = getUniqueSuccNode node
-        let thisNodePc = pc4node curComp.Value node
+        let thisNodePc = pc4nodeMainName curComp.Value node
         let nextNodeStep =
             if areInSameBlock ctx (curComp.Value).name node succ then
                 // if one unguarded transition, leading a node inside the same block, translate that node
@@ -632,7 +634,7 @@ let rec private processNode ctx (curComp: Compilation ref) (node: Node) =
         
     // Here we re-enter the run statement and continue execution of the subprogram
     | CallNode (pos, whoToCall, receiverVar, inputs, outputs, retcodeVar) ->
-        let thisNodePc = pc4node curComp.Value node
+        let thisNodePc = pc4nodeMainName curComp.Value node
         let nextStep =
             node.Outgoing
             |> Seq.toList
@@ -667,7 +669,7 @@ let rec private processNode ctx (curComp: Compilation ref) (node: Node) =
             | Some {lhs = ReturnVar} -> // return run... end this thread
                 // if (0 == retcode) {end thread} else {nextStep}
                 let hasActTerminated = txt "0 ==" <+> renderCName Current ctx.tcc retcodeVar
-                cpIfElse hasActTerminated (endThread curComp.Value node) nextStep
+                cpIfElse hasActTerminated (endThread <| pc4node curComp.Value node) nextStep
             | _ -> // normal run... proceed to the next block
                 nextStep
 
@@ -1001,7 +1003,9 @@ let internal translate ctx (subProgDecl: ProcedureImpl) =
             :: rest 
             |> dpBlock
 
-    let initBody = pcInit ctx (fromContext "") curComp.Value
+    let initBody = 
+        endThread curComp.Value.GetActCtx.pcs
+        <.> pcInit ctx (fromContext "") curComp.Value
 
     let initActivityCode =
         txt "void"
