@@ -45,7 +45,7 @@ Navigate to the folder where you have checked out the Blech project. It should c
 
     For Linux use `linux-x64` or `linux-arm64`, for MacOS use `osx-x64` for Intel or `osx-arm64` for Apple silicon.
 
-    This creates a folder named with your chosen runtime id, e.g. `./src/blechc/bin/Release/net6.0/win-x64/win-x64` which contains all files needed for execution. The folder as a whole can be moved arbitrarily.
+    This creates a folder named with your chosen runtime id, e.g. `./src/blechc/bin/Release/net6.0/win-x64` which contains all files needed for execution. The folder as a whole can be moved arbitrarily.
     Inside the folder invoke the binary.
     ```
     blechc
