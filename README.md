@@ -40,16 +40,18 @@ Navigate to the folder where you have checked out the Blech project. It should c
 
   * Finally, for a **release build**, which is operating system dependent, you need to run `dotnet publish` with a specific runtime identifier like so
     ```
-    dotnet publish -c Release -r win-x64 --self-contained false
+    dotnet publish -c Release -r win-x64 --self-contained
     ```
+
     For Linux use `linux-x64` or `linux-arm64`, for MacOS use `osx-x64` for Intel or `osx-arm64` for Apple silicon.
 
-    This creates a folder `./src/blechc/bin/Release/net6.0/win-x64/publish` which contains all files needed for execution. The folder as a whole can be moved arbitrarily.
-    Inside the folder invoke the binary
+    This creates a folder named with your chosen runtime id, e.g. `./src/blechc/bin/Release/net6.0/win-x64/win-x64` which contains all files needed for execution. The folder as a whole can be moved arbitrarily.
+    Inside the folder invoke the binary.
     ```
     blechc
     ```
     to run the Blech compiler.
+
 
 In order to **run the unit tests** execute
 ```
