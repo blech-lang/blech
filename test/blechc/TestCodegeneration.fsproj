@@ -30,8 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FSharp.Data" Version="4.2.7" />
-    <PackageReference Include="FSharp.Core" Version="6.0.1" />
+    <PackageReference Include="FSharp.Data" Version="4.2.8" />
+    <PackageReference Include="FSharp.Core" Version="6.0.3" />
   </ItemGroup>
 
 </Project>
