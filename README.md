@@ -48,11 +48,13 @@ Navigate to the folder where you have checked out the Blech project. It should c
 
     This creates a folder named with your chosen runtime id, e.g. `./src/blechc/bin/Release/net6.0/win-x64/publish` which contains all files needed for execution. The folder as a whole can be moved arbitrarily.
     Inside the folder invoke the binary.
+
     ```
     blechc
     ```
     to run the Blech compiler.
 
+    For MacOS you might need to enable the execution of binaries from the terminal. Goto Security & Privacy -> Developer Tools and allow Terminal.app to execute binaries.
 
 In order to **run the unit tests** execute
 ```
