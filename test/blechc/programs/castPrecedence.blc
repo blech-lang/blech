@@ -1,0 +1,6 @@
+@[EntryPoint]
+activity Main ()()
+    await true
+    var x: nat32 = 142000
+    var y: nat16 = (x / 10) as! nat16
+end

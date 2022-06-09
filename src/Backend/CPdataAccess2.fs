@@ -432,21 +432,17 @@ let rec cpTml timepoint tcc (tml: TypedMemLoc) : PrereqBlob =
         <| pp.prereqStmts @ suffix.prereqStmts
         <| Loc (ArrayAccess (pp.path, suffix.cExpr))
 
-and complexInParens cpExpr doc =
+and complexInParens cpExpr =
     match cpExpr with
-    | ComplexExpr _ -> doc |> parens
-    | _ -> doc
+    | ComplexExpr _ -> cpExpr.Render |> parens
+    | _ -> cpExpr.Render
 
 and private binExpr tcc s1 s2 infx =
     let re1 = cpExpr tcc s1
     let re2 = cpExpr tcc s2
     let render (rs: CExpr list) =
-        let left =
-            rs.[0].Render
-            |> complexInParens rs.[0]
-        let right =
-            rs.[1].Render
-            |> complexInParens rs.[1]
+        let left = complexInParens rs.[0]
+        let right = complexInParens rs.[1]
         left
         |> (</>) <| txt infx
         |> (<+>) <| right
@@ -460,11 +456,9 @@ and private binConj tcc s1 s2 =
     match getPrereq re2 with
     | [] -> // this case is an optimisation
         let render (rs: CExpr list) =
-            rs.[0].Render
-            |> complexInParens rs.[0]
+            complexInParens rs.[0]
             |> (</>) <| txt "&&"
-            |> (<+>) <| rs.[1].Render
-            |> complexInParens rs.[1]
+            |> (<+>) <| complexInParens rs.[1]
         mkPrereqExpr
         <| (getPrereq re1 @ getPrereq re2)
         <| ComplexExpr (render, [getCExpr re1; getCExpr re2])
@@ -496,11 +490,9 @@ and private binDisj tcc s1 s2 =
     match getPrereq re2 with
     | [] -> // this case is an optimisation
         let render (rs: CExpr list) =
-            rs.[0].Render
-            |> complexInParens rs.[0]
+            complexInParens rs.[0]
             |> (</>) <| txt "||"
-            |> (<+>) <| rs.[1].Render
-            |> complexInParens rs.[1]
+            |> (<+>) <| complexInParens rs.[1]
         mkPrereqExpr
         <| (getPrereq re1 @ getPrereq re2)
         <| ComplexExpr (render, [getCExpr re1; getCExpr re2])
@@ -608,7 +600,7 @@ and cpExpr tcc expr : PrereqExpression =
         let re = cpExpr tcc subExpr
         let rt = cpType targetType
         let render (rs: CExpr list) =
-            parens rt <^> rs.[0].Render
+            parens rt <^> (complexInParens rs.[0])
         mkPrereqExpr
         <| re.prereqStmts
         <| ComplexExpr (render, [re.cExpr])
@@ -616,7 +608,7 @@ and cpExpr tcc expr : PrereqExpression =
     | Neg subExpr -> 
         let re = cpExpr tcc subExpr
         let render (rs: CExpr list) =
-            txt "!" <^> (rs.[0].Render |> complexInParens rs.[0])
+            txt "!" <^> (complexInParens rs.[0])
         mkPrereqExpr
         <| re.prereqStmts
         <| ComplexExpr (render, [re.cExpr])
@@ -626,7 +618,7 @@ and cpExpr tcc expr : PrereqExpression =
     | Bnot subExpr -> 
         let re = cpExpr tcc subExpr
         let render (rs: CExpr list) =
-            txt "~" <^> (rs.[0].Render|> complexInParens rs.[0])
+            txt "~" <^> (complexInParens rs.[0])
         mkPrereqExpr
         <| re.prereqStmts
         <| ComplexExpr (render, [re.cExpr])
