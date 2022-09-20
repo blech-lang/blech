@@ -16,8 +16,9 @@
 
 let BLECH_SUFFIX = ".blc"
 let C_SUFFIX = ".c"
-let OBJ_SUFFIX = ".obj"
-let EXE_SUFFIX = ".exe"
+//let OBJ_SUFFIX = ".o"
+//let EXE_SUFFIX = ".exe"
+//let EXE_SUFFIX = ""
 let EXT_SUFFIX = ".ext"
 let IMP_SUFFIX = "_imp"
 let EXT_C = EXT_SUFFIX + ".c"
@@ -27,6 +28,27 @@ let APP_NAME = "App"
 let SPEC_SUFFIX = ".spec.json"
 let TEST_SUFFIX = ".test.json"
 let CUR_DIR = "" //default setting for ProcessStartInfo.WorkingDirectory
+
+open System
+
+type OS =
+        | OSX
+        | Windows
+        | Linux
+let getOS =
+        match int Environment.OSVersion.Platform with
+        | 4 | 128 -> Linux
+        | 6       -> OSX
+        | _       -> Windows
+
+let EXE_SUFFIX =
+    match getOS with
+    | Windows -> ".exe"
+    | _ -> ""
+let OBJ_SUFFIX =
+    match getOS with
+    | Windows ->".obj"
+    | _ -> ".o"
 
 module DiffJSON =
 
