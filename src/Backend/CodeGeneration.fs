@@ -139,7 +139,7 @@ let generateSelfHeader =
     TranslatePath.moduleToInclude >> includeQuotedHfile
         
 let generateCProgramHeader =
-    TranslatePath.moduleToCFileInclude >> includeQuotedHfile
+    TranslatePath.moduleToInclude >> includeQuotedHfile
 
 let generateIncludeGuards moduleName =
     let guard = txt <| TranslatePath.moduleToIncludeGuard moduleName
