@@ -249,13 +249,14 @@ let parseModuleFromStr diagnosticLogger (implOrIface: CompilationUnit.ImplOrIfac
 
     let stream = new IO.StringReader(contents)
     
-    // intialise lexing buffer
+    // initialise lexing buffer
     let lexbuf = FSharp.Text.Lexing.LexBuffer<char>.FromTextReader stream
     lexbuf.EndPos <- { pos_bol = 0
                        pos_fname = fileName // use module instead of file name 
                        pos_cnum = 0
-                       pos_lnum = 1 }
-    
+                       pos_lnum = 1
+                       pos_orig_lnum = 1 }
+
     // parse the file
     let utyPkg = myBlechParser myBlechLexer lexbuf
 

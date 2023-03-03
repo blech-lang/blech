@@ -244,3 +244,5 @@ blech.c
 /src/blechc/Properties/launchSettings.json
 
 .fake
+
+.DS_Store

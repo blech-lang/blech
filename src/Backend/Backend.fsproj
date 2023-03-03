@@ -39,12 +39,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="7.0.200" />
+  </ItemGroup>
+  
+  
+  <ItemGroup>
     <ProjectReference Include="..\Intermediate\Intermediate.fsproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="FSharp.Core" Version="6.0.3" />
-  </ItemGroup>
-  
-  
 </Project>

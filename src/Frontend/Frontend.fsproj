@@ -59,10 +59,10 @@
     <Compile Include="Annotation.fs" />
     <Compile Include="TypeChecking.fs" />
     <Compile Include="ImportChecking.fs" />
-    <PackageReference Include="FsLexYacc" Version="10.2.0" />
-    <PackageReference Include="FsLexYacc.Runtime" Version="10.2.0" />
+    <PackageReference Include="FsLexYacc" Version="11.0.1" />
+    <PackageReference Include="FsLexYacc.Runtime" Version="11.0.1" />
     <ProjectReference Include="..\Common\Common.fsproj" />
-    <PackageReference Include="FSharp.Core" Version="6.0.3" />
+    <PackageReference Update="FSharp.Core" Version="7.0.200" />
    </ItemGroup>
   
 </Project>
