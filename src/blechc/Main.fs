@@ -48,7 +48,7 @@ module Main =
         let assembly = System.Reflection.Assembly.GetExecutingAssembly()
         let assemName = assembly.GetName();
         let version = assemName.Version
-        sprintf "%d.%d.%d+%d" version.Major version.Minor version.Build version.Revision
+        sprintf "%d.%d.%d" version.Major version.Minor version.Build
 
 
     let private blechcCopyright = 
